@@ -33,7 +33,7 @@ logging.basicConfig(
 TAG_URL       = "https://www.westword.com/tag/openings-closings/"
 OUTPUT_FILE   = "westword_openings_closings.csv"
 REQUEST_DELAY = 1.5
-MAX_PAGES     = 5  # None = all pages; set to an int to limit
+MAX_PAGES     = None  # None = all pages; set to an int to limit
 USER_AGENT    = "Mozilla/5.0 (compatible; WestwordScraper/1.0)"
 HEADERS       = {"User-Agent": USER_AGENT}
 
@@ -103,9 +103,10 @@ OPENINGS_HEADING_RE = re.compile(r"^openings?$", re.IGNORECASE)
 CLOSURES_HEADING_RE = re.compile(r"^(closures?|closed?)$", re.IGNORECASE)
 
 
-def parse_article(url, fallback_date):
+def parse_article(url, fallback_date, article_title=""):
     soup = get_soup(url)
     rows = []
+    ctx = {"url": url, "title": article_title}
 
     # -- Date: OpenGraph meta is the most reliable source ---------------------
     post_date = fallback_date
@@ -136,6 +137,7 @@ def parse_article(url, fallback_date):
                 except ValueError:
                     post_date = time_tag.get_text(strip=True)
 
+    ctx["date"] = post_date
 
     body = (
         soup.find("div", class_=re.compile(
@@ -144,32 +146,40 @@ def parse_article(url, fallback_date):
         or soup.find("article")
     )
     if not body:
-        return post_date, []
+        return post_date, [], []
+
+    sidecar_rows = []  # location sub-header entries (e.g. DIA) written separately
 
     # Walk tags. We ONLY collect entries after an exact "Openings" or
     # "Closures" heading is found. Every tag before that heading is ignored
     # - no prose leaks through, and individual story articles (which never
     # have those headings) produce zero rows intentionally.
-    section = None   # current list section, or None
-    in_list = False  # True once we have seen at least one list heading
+    section = None         # current list section, or None
+    in_list = False        # True once we have seen at least one list heading
+    pending_name = None    # restaurant name from "Name, N locations:" sub-header
+    pending_address = None # shared address from "New at Location, sub-loc:" sub-header
 
     for tag in body.find_all(["h2", "h3", "h4", "p", "li"]):
         text = tag.get_text(strip=True)
+        text = " ".join(text.split())  # collapse all whitespace incl. \xa0, \u200b, etc.
         norm = text.strip()
 
         if tag.name in ("h2", "h3", "h4"):
             if OPENINGS_HEADING_RE.match(norm):
                 section = "opened"
                 in_list = True
+                pending_name = pending_address = None
                 continue
             if CLOSURES_HEADING_RE.match(norm):
                 section = "closed"
                 in_list = True
+                pending_name = pending_address = None
                 continue
             # Any other heading after we are in the list resets the section.
             # We keep scanning in case another Openings/Closures follows.
             if in_list:
                 section = None
+                pending_name = pending_address = None
             continue
 
         # Skip everything that precedes the first list heading
@@ -190,11 +200,69 @@ def parse_article(url, fallback_date):
                     lines.append(clean)
 
         for line in lines:
-            entry = parse_entry_line(line, section)
+            entry = parse_entry_line(line, section, ctx)
             if entry:
+                pending_name = pending_address = None
                 rows.append(entry)
+            elif line.endswith(":") and "," in line:
+                # Sub-header with a comma — two possible formats:
+                #   "Name, N locations:"      → sub-entries are addresses (Sanitas pattern)
+                #   "New at Location, sub-loc:" → sub-entries are names (DIA pattern)
+                # Distinguish by checking whether the part before the first comma
+                # looks like an address/location keyword.
+                header = line.rstrip(":").strip()
+                first_part = header.split(",", 1)[0].strip().strip("*").strip()
+                if ADDRESS_RE.search(first_part):
+                    # Location header: sub-entries are restaurant names
+                    pending_address = re.sub(r"^new at\s+", "", header, flags=re.IGNORECASE)
+                    pending_name = None
+                else:
+                    # Restaurant header: sub-entries are addresses
+                    pending_name = first_part
+                    pending_address = None
+            elif pending_name:
+                # Address-only line following a "Name, N locations:" sub-header
+                entry = parse_entry_line(f"{pending_name}, {line}", section, ctx)
+                if entry:
+                    rows.append(entry)
+                else:
+                    logging.warning(
+                        "Could not parse sub-entry %r (pending name: %r) | %s | %s | %s",
+                        line, pending_name, ctx["date"], ctx["title"], ctx["url"],
+                    )
+            elif pending_address:
+                if re.search(r"airport", pending_address, re.IGNORECASE):
+                    # Airport entry: use fixed DIA address, concourse → notes
+                    name = line.strip().strip("*").strip()
+                    notes = ""
+                    note_match = NOTE_SUFFIX_RE.search(name)
+                    if note_match:
+                        notes = note_match.group(1).strip()
+                        name = name[: note_match.start()].strip().strip("*").strip()
+                    addr_parts = pending_address.split(",", 1)
+                    concourse = addr_parts[1].strip().title() if len(addr_parts) > 1 else ""
+                    if concourse:
+                        notes = f"{concourse}; {notes}".strip("; ") if notes else concourse
+                    if name:
+                        rows.append({
+                            "status":          section,
+                            "restaurant_name": name,
+                            "address":         "8500 Peña Boulevard",
+                            "city":            "Denver",
+                            "notes":           notes,
+                        })
+                else:
+                    # Other location sub-headers — write to sidecar for review
+                    sidecar_rows.append({
+                        "post_date":       ctx["date"],
+                        "article_title":   ctx["title"],
+                        "article_url":     ctx["url"],
+                        "status":          section,
+                        "location":        pending_address,
+                        "restaurant_name": line.strip().strip("*").strip(),
+                    })
 
-    return post_date, rows
+    return post_date, rows, sidecar_rows
 
 
 # ---- Entry-line parsing -----------------------------------------------------
@@ -210,7 +278,7 @@ ADDRESS_RE = re.compile(
 )
 
 
-def parse_entry_line(line, status):
+def parse_entry_line(line, status, ctx=None):
     # Strip leading />  artifacts left by <br> splitting
     line = re.sub(r"^[\s/>*]+", "", line).strip()
     if not line or len(line) < 6:
@@ -251,7 +319,12 @@ def parse_entry_line(line, status):
 
     # Address must look like an address (contain a digit or street keyword)
     if not ADDRESS_RE.search(address):
-        logging.warning("Rejected address (no digit or known street keyword): %r — from line: %r", address, line)
+        ctx = ctx or {}
+        logging.warning(
+            "Rejected address %r — from line: %r | %s | %s | %s",
+            address, line,
+            ctx.get("date", ""), ctx.get("title", ""), ctx.get("url", ""),
+        )
         return None
     if len(address) > 200:
         return None
@@ -289,16 +362,27 @@ def deduplicate(all_rows):
     ))
 
     seen = {}
+    duplicates = []
     for row in all_rows:
         key = (
             row["restaurant_name"].lower().strip(),
             row["address"].lower().strip(),
             row["status"],
+            row.get("year", ""),
+            row.get("month", ""),
         )
         if key not in seen:
             seen[key] = dict(row)
         else:
             existing = seen[key]
+            # Record this row as a duplicate before merging
+            dup = dict(row)
+            dup["merged_into_url"] = existing["article_url"]
+            if existing.get("date_precision") != row.get("date_precision"):
+                dup["duplicate_reason"] = "same event in weekly and monthly article"
+            else:
+                dup["duplicate_reason"] = "same event reported in multiple articles"
+            duplicates.append(dup)
             # Accumulate source URLs from both articles
             existing_urls = existing["source_urls"].split(" | ")
             if row["article_url"] not in existing_urls:
@@ -318,7 +402,7 @@ def deduplicate(all_rows):
 
     deduped = list(seen.values())
     deduped.sort(key=lambda r: r["post_date"] or "")
-    return deduped
+    return deduped, duplicates
 
 
 # ---- Main -------------------------------------------------------------------
@@ -359,6 +443,7 @@ def main():
         print("No existing data found -- full scrape")
 
     new_rows = []
+    sidecar_rows = []
     page = 1
     stop_early = False  # set True once we hit a page of all-already-seen articles
 
@@ -385,7 +470,8 @@ def main():
             print(f"    -> {art['url'][:80]}", end=" ... ", flush=True)
             try:
                 time.sleep(REQUEST_DELAY)
-                post_date, entries = parse_article(art["url"], art["post_date"])
+                post_date, entries, art_sidecar = parse_article(art["url"], art["post_date"], art["title"])
+                sidecar_rows.extend(art_sidecar)
                 if not post_date:
                     logging.warning("Missing post_date for %s", art["url"])
                 try:
@@ -430,15 +516,36 @@ def main():
         all_rows.append(dict(row))
     all_rows.extend(new_rows)
 
-    deduped = deduplicate(all_rows)
+    deduped, duplicates = deduplicate(all_rows)
 
     with open(OUTPUT_FILE, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=FIELDNAMES, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(deduped)
 
+    if duplicates:
+        dup_file = "westword_duplicates.csv"
+        dup_fields = FIELDNAMES + ["duplicate_reason", "merged_into_url"]
+        with open(dup_file, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=dup_fields, extrasaction="ignore")
+            writer.writeheader()
+            writer.writerows(duplicates)
+        logging.info("  Duplicates: %d → %s", len(duplicates), dup_file)
+
+    if sidecar_rows:
+        sidecar_file = "westword_location_entries.csv"
+        sidecar_fields = ["post_date", "article_title", "article_url", "status", "location", "restaurant_name"]
+        write_header = not __import__("os").path.exists(sidecar_file)
+        with open(sidecar_file, "a", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=sidecar_fields)
+            if write_header:
+                writer.writeheader()
+            writer.writerows(sidecar_rows)
+        logging.info("  Location entries (e.g. DIA): %d → %s", len(sidecar_rows), sidecar_file)
+
     print(f"\nDone.")
     print(f"  New entries scraped:  {len(new_rows)}")
+    print(f"  Duplicates merged:    {len(duplicates)}")
     print(f"  Total after dedup:    {len(deduped)}")
     print(f"  Saved to:             {OUTPUT_FILE}")
 
