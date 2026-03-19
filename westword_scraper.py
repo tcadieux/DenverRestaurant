@@ -6,12 +6,12 @@ Crawls https://www.westword.com/tag/openings-closings/ and scrapes
 each article for structured opening/closing data.
 
 Output: westword_openings_closings.csv
-Columns: post_date, article_title, article_url, status, restaurant_name,
-         address, city, neighborhood, notes,
-         source_urls
+Columns: post_date, month, year, date_precision, article_title, article_url,
+         status, restaurant_name, address, city, notes, source_urls
 """
 
 import csv
+import logging
 import re
 import time
 from datetime import datetime
@@ -19,11 +19,21 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    handlers=[
+        logging.FileHandler("westword_scraper.log"),
+        logging.StreamHandler(),
+    ],
+)
+
 # ---- Config -----------------------------------------------------------------
 TAG_URL       = "https://www.westword.com/tag/openings-closings/"
 OUTPUT_FILE   = "westword_openings_closings.csv"
 REQUEST_DELAY = 1.5
-MAX_PAGES     = 1  # None = all pages; set to an int to limit
+MAX_PAGES     = 5  # None = all pages; set to an int to limit
 USER_AGENT    = "Mozilla/5.0 (compatible; WestwordScraper/1.0)"
 HEADERS       = {"User-Agent": USER_AGENT}
 
@@ -143,7 +153,7 @@ def parse_article(url, fallback_date):
     section = None   # current list section, or None
     in_list = False  # True once we have seen at least one list heading
 
-    for tag in body.find_all(["h2", "h3", "h4", "p", "ul", "li"]):
+    for tag in body.find_all(["h2", "h3", "h4", "p", "li"]):
         text = tag.get_text(strip=True)
         norm = text.strip()
 
@@ -174,14 +184,10 @@ def parse_article(url, fallback_date):
         lines = []
         if tag.name in ("p", "li"):
             raw_html = tag.decode_contents()
-            # List items are separated by <br> variants within a <p>
             for part in re.split(r"<br\s*/?>", raw_html, flags=re.IGNORECASE):
                 clean = BeautifulSoup(part, "html.parser").get_text(strip=True)
                 if clean:
                     lines.append(clean)
-        elif tag.name == "ul":
-            for li in tag.find_all("li"):
-                lines.append(li.get_text(strip=True))
 
         for line in lines:
             entry = parse_entry_line(line, section)
@@ -245,6 +251,7 @@ def parse_entry_line(line, status):
 
     # Address must look like an address (contain a digit or street keyword)
     if not ADDRESS_RE.search(address):
+        logging.warning("Rejected address (no digit or known street keyword): %r — from line: %r", address, line)
         return None
     if len(address) > 200:
         return None
@@ -267,27 +274,6 @@ def parse_entry_line(line, status):
         "city":            city,
         "notes":           notes,
     }
-
-
-def parse_plain_text_block(text):
-    rows = []
-    section = None
-    for line in text.splitlines():
-        line = line.strip()
-        norm = line.lower()
-        if re.match(r"^openings?$", norm):
-            section = "opened"
-            continue
-        if re.match(r"^(closures?|closed?)$", norm):
-            section = "closed"
-            continue
-        if section and re.match(r"^\*or earlier", norm):
-            break
-        if section:
-            entry = parse_entry_line(line, section)
-            if entry:
-                rows.append(entry)
-    return rows
 
 
 # ---- Deduplication ----------------------------------------------------------
@@ -326,7 +312,7 @@ def deduplicate(all_rows):
                 existing["article_url"] = row["article_url"]
                 existing["date_precision"] = "week"
             # Fill in any missing enrichment fields
-            for field in ("notes", "neighborhood", "city"):
+            for field in ("notes", "city"):
                 if not existing.get(field) and row.get(field):
                     existing[field] = row[field]
 
@@ -338,7 +324,7 @@ def deduplicate(all_rows):
 # ---- Main -------------------------------------------------------------------
 FIELDNAMES = [
     "post_date", "month", "year", "date_precision", "article_title", "article_url", "status",
-    "restaurant_name", "address", "city", "neighborhood",
+    "restaurant_name", "address", "city",
     "notes", "source_urls",
 ]
 
@@ -400,13 +386,21 @@ def main():
             try:
                 time.sleep(REQUEST_DELAY)
                 post_date, entries = parse_article(art["url"], art["post_date"])
+                if not post_date:
+                    logging.warning("Missing post_date for %s", art["url"])
+                try:
+                    month = datetime.strptime(post_date, "%Y-%m-%d").strftime("%B") if post_date else ""
+                    year  = datetime.strptime(post_date, "%Y-%m-%d").strftime("%Y") if post_date else ""
+                except ValueError:
+                    logging.warning("Unparseable post_date %r for %s", post_date, art["url"])
+                    month, year = "", ""
                 precision = "week" if re.search(r"\bweek\b", art["title"], re.IGNORECASE) else "month"
                 print(f"{len(entries)} entries")
                 for entry in entries:
                     new_rows.append({
                         "post_date":       post_date,
-                        "month":           datetime.strptime(post_date, "%Y-%m-%d").strftime("%B") if post_date else "",
-                        "year":            datetime.strptime(post_date, "%Y-%m-%d").strftime("%Y") if post_date else "",
+                        "month":           month,
+                        "year":            year,
                         "date_precision":  precision,
                         "article_title":   art["title"],
                         "article_url":     art["url"],
@@ -414,12 +408,11 @@ def main():
                         "restaurant_name": entry["restaurant_name"],
                         "address":         entry["address"],
                         "city":            entry.get("city", ""),
-                        "neighborhood":    "",
                         "notes":           entry.get("notes", ""),
                         "source_urls":     art["url"],
                     })
             except Exception as e:
-                print(f"SKIP ({e})")
+                logging.warning("SKIP %s — %s: %s", art["url"], type(e).__name__, e)
 
         if not has_next or (MAX_PAGES and page >= MAX_PAGES):
             break

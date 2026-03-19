@@ -1,0 +1,4 @@
+2026-03-19 15:12:34 WARNING Rejected address (no digit or known street keyword): 'Broomfield' — from line: 'Beltran’s Grill 16818 Sheridan Pkwy, Broomfield'
+2026-03-19 15:12:53 WARNING Rejected address (no digit or known street keyword): 'Boulder' — from line: '3550 Frontier Avenue, Boulder'
+2026-03-19 15:12:53 WARNING Rejected address (no digit or known street keyword): 'Englewood' — from line: '200 West Belleview Avenue, Englewood'
+2026-03-19 15:12:53 WARNING Rejected address (no digit or known street keyword): 'Lafayette' — from line: '400 West South Boulder Road, Lafayette'
