@@ -8,6 +8,8 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repo
@@ -40,4 +42,4 @@ jobs:
             [ -f "$f" ] && git add "$f" || true
           done
           git diff --cached --quiet || git commit -m "chore: weekly data update $(date -u '+%Y-%m-%d')"
-          git push
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/tcadieux/DenverRestaurant.git HEAD:main
