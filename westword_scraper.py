@@ -31,7 +31,8 @@ logging.basicConfig(
 
 # ---- Config -----------------------------------------------------------------
 TAG_URL       = "https://www.westword.com/tag/openings-closings/"
-OUTPUT_FILE   = "westword_openings_closings.csv"
+OUTPUT_FILE    = "westword_openings_closings.csv"
+SEEN_URLS_FILE = "westword_seen_urls.txt"  # all fetched article URLs, incl. zero-entry ones
 REQUEST_DELAY = 1.5
 MAX_PAGES     = None  # None = all pages; set to an int to limit
 USER_AGENT    = "Mozilla/5.0 (compatible; WestwordScraper/1.0)"
@@ -428,10 +429,17 @@ def load_existing():
     with open(OUTPUT_FILE, newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
             existing_rows.append(row)
-            # source_urls may contain multiple pipe-separated URLs
             for url in row.get("source_urls", "").split(" | "):
                 if url.strip():
                     seen_urls.add(url.strip())
+    # Also load URLs fetched but yielding zero entries (individual restaurant articles)
+    import os
+    if os.path.exists(SEEN_URLS_FILE):
+        with open(SEEN_URLS_FILE, encoding="utf-8") as f:
+            for line in f:
+                url = line.strip()
+                if url:
+                    seen_urls.add(url)
     return existing_rows, seen_urls
 
 
@@ -467,6 +475,7 @@ def main():
             break
 
         for art in fresh:
+            seen_urls.add(art["url"])  # mark as seen regardless of entry count
             print(f"    -> {art['url'][:80]}", end=" ... ", flush=True)
             try:
                 time.sleep(REQUEST_DELAY)
@@ -504,6 +513,9 @@ def main():
             break
         page += 1
         time.sleep(REQUEST_DELAY)
+
+    with open(SEEN_URLS_FILE, "w", encoding="utf-8") as f:
+        f.write("\n".join(sorted(seen_urls)))
 
     if not new_rows:
         print(f"\nNothing new to add. {len(existing_rows)} records unchanged.")
