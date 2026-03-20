@@ -17,7 +17,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_c3b5b9be2d9aa9a081d85392f6a88675 {
+                #map_f81c52ff7e85dee313d5232eecc489f3 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -194,7 +194,7 @@
 
     function applyFilters() {
       if (!markerLayer) {
-        markerLayer = L.layerGroup().addTo(map_c3b5b9be2d9aa9a081d85392f6a88675);
+        markerLayer = L.layerGroup().addTo(map_f81c52ff7e85dee313d5232eecc489f3);
       }
       ["ms-city","ms-year","ms-month"].forEach(updateLabel);
       var cities = getChecked("ms-city-list");
@@ -224,6 +224,7 @@
           fillOpacity: 0.85, weight: 1.5
         });
         marker.bindTooltip(popupHtml(loc), {maxWidth: 400, sticky: false});
+        marker.bindPopup(popupHtml(loc), {maxWidth: 420});
         markerLayer.addLayer(marker);
         count++;
       });
@@ -260,14 +261,14 @@
     </script>
     
     
-            <div class="folium-map" id="map_c3b5b9be2d9aa9a081d85392f6a88675" ></div>
+            <div class="folium-map" id="map_f81c52ff7e85dee313d5232eecc489f3" ></div>
         
 </body>
 <script>
     
     
-            var map_c3b5b9be2d9aa9a081d85392f6a88675 = L.map(
-                "map_c3b5b9be2d9aa9a081d85392f6a88675",
+            var map_f81c52ff7e85dee313d5232eecc489f3 = L.map(
+                "map_f81c52ff7e85dee313d5232eecc489f3",
                 {
                     center: [39.7392, -104.9903],
                     crs: L.CRS.EPSG3857,
@@ -284,7 +285,7 @@
 
         
     
-            var tile_layer_04467aa92221c0d033a43325504f0ccb = L.tileLayer(
+            var tile_layer_fcbd7340b0612d1f896e2567acfb7c02 = L.tileLayer(
                 "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
                 {
   "minZoom": 0,
@@ -301,7 +302,7 @@
             );
         
     
-            tile_layer_04467aa92221c0d033a43325504f0ccb.addTo(map_c3b5b9be2d9aa9a081d85392f6a88675);
+            tile_layer_fcbd7340b0612d1f896e2567acfb7c02.addTo(map_f81c52ff7e85dee313d5232eecc489f3);
         
 </script>
 </html>

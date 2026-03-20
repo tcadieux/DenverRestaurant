@@ -356,21 +356,21 @@ def deduplicate(all_rows):
     Deduplicate on (restaurant_name, address, status).
     Week-precision entries win over month-precision; accumulate source_urls.
     """
-    # Sort so week entries come before month entries (week=0, month=1)
+    # Sort: earliest date first, week precision beats month/year for same date
+    _prec_order = {"week": 0, "month": 1, "year": 2}
     all_rows.sort(key=lambda r: (
         r["post_date"] or "9999-99-99",
-        0 if r.get("date_precision") == "week" else 1,
+        _prec_order.get(r.get("date_precision", "month"), 1),
     ))
 
     seen = {}
     duplicates = []
     for row in all_rows:
+        # Same restaurant + address + status = same event, regardless of which article reported it
         key = (
             row["restaurant_name"].lower().strip(),
             row["address"].lower().strip(),
             row["status"],
-            row.get("year", ""),
-            row.get("month", ""),
         )
         if key not in seen:
             seen[key] = dict(row)
@@ -489,7 +489,12 @@ def main():
                 except ValueError:
                     logging.warning("Unparseable post_date %r for %s", post_date, art["url"])
                     month, year = "", ""
-                precision = "week" if re.search(r"\bweek\b", art["title"], re.IGNORECASE) else "month"
+                if re.search(r"\bweek\b", art["title"], re.IGNORECASE):
+                    precision = "week"
+                elif re.search(r"\bin \d{4}\b", art["title"], re.IGNORECASE):
+                    precision = "year"
+                else:
+                    precision = "month"
                 print(f"{len(entries)} entries")
                 for entry in entries:
                     new_rows.append({
