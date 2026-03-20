@@ -288,6 +288,7 @@ def build_filter_js(locations_data, map_name):
           fillOpacity: 0.85, weight: 1.5
         }});
         marker.bindTooltip(popupHtml(loc), {{maxWidth: 400, sticky: false}});
+        marker.bindPopup(popupHtml(loc), {{maxWidth: 420}});
         markerLayer.addLayer(marker);
         count++;
       }});
