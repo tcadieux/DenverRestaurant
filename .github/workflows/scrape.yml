@@ -30,14 +30,16 @@ jobs:
       - name: Run geocode enrichment
         run: python enrich_geocode.py
 
-      - name: Generate map
-        run: python generate_map.py
+      - name: Generate maps
+        run: |
+          python generate_map.py
+          python generate_map_v2.py
 
       - name: Commit updated data
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add westword_openings_closings.csv westword_enriched.csv map.html westword_seen_urls.txt
+          git add westword_openings_closings.csv westword_enriched.csv map.html map2.html westword_seen_urls.txt
           for f in westword_duplicates.csv westword_location_entries.csv westword_geocode_errors.csv; do
             [ -f "$f" ] && git add "$f" || true
           done
