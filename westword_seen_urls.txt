@@ -9,6 +9,7 @@ https://www.westword.com/food-drink/5-denver-bars-and-restaurants-closed-this-we
 https://www.westword.com/food-drink/6-denver-restaurants-closed-this-week-including-some-longtime-staples-40866840/
 https://www.westword.com/food-drink/6-new-denver-restaurants-open-including-cherry-creek-spanish-bistro-40827889/
 https://www.westword.com/food-drink/9-most-anticipated-denver-restaurant-openings-spring-2026-40855235/
+https://www.westword.com/food-drink/a-fire-closed-one-of-their-restaurants-a-truck-crash-closed-another-40881798/
 https://www.westword.com/food-drink/acclaimed-l-a-chef-launches-residency-at-hop-alley-in-rino-40795276/
 https://www.westword.com/food-drink/alameda-avenue-dim-sum-staple-flips-for-new-dim-sum-shop-40784446/
 https://www.westword.com/food-drink/arvada-burger-spot-announces-closure-and-plans-for-new-locations-40855625/
@@ -34,6 +35,7 @@ https://www.westword.com/food-drink/bowls-by-ko-brick-and-mortar-location-openin
 https://www.westword.com/food-drink/broadway-hot-chicken-joint-music-city-is-pouring-beer-again-40842736/
 https://www.westword.com/food-drink/broomfield-sushi-spot-closing-after-more-than-a-decade-40826494/
 https://www.westword.com/food-drink/bygone-denver-restaurants-we-miss-the-most-23011083/
+https://www.westword.com/food-drink/cap-hill-pan-asian-eatery-reckless-noodle-house-closed-40881652/
 https://www.westword.com/food-drink/capitol-hill-lands-new-east-coast-style-deli-on-lincoln-40834090/
 https://www.westword.com/food-drink/centennial-japanese-restaurant-to-replace-longtime-barbecue-staple-40858563/
 https://www.westword.com/food-drink/central-park-dumpling-restaurant-yumcha-closes-40789615/
@@ -114,6 +116,7 @@ https://www.westword.com/food-drink/michelin-favorite-opening-new-restaurant-in-
 https://www.westword.com/food-drink/michelin-recognized-team-opening-new-sushi-spot-40839849/
 https://www.westword.com/food-drink/michelin-recognized-team-sets-opening-date-for-rino-italian-eatery-40818319/
 https://www.westword.com/food-drink/michelin-recommended-colfax-restaurant-announces-closure-40784495/
+https://www.westword.com/food-drink/monarch-pizza-opens-in-urban-cowboy-public-house-40882724/
 https://www.westword.com/food-drink/moon-raccoon-opening-brick-and-mortar-bakery-in-sunnyside-25538943/
 https://www.westword.com/food-drink/most-anticipated-denver-restaurant-openings-fall-2025-40783569/
 https://www.westword.com/food-drink/most-anticipated-denver-restaurant-openings-this-winter-40819646/
@@ -179,9 +182,11 @@ https://www.westword.com/food-drink/rino-eatery-expands-to-englewood-and-more-re
 https://www.westword.com/food-drink/rino-restaurant-from-james-beard-nominated-chef-opening-soon-40813244/
 https://www.westword.com/food-drink/rino-southern-spot-yardbird-closes-and-more-restaurant-news-40788785/
 https://www.westword.com/food-drink/rino-staple-known-for-latin-dim-sum-announces-upcoming-closure-40845569/
+https://www.westword.com/food-drink/riot-bbq-chefs-open-new-restaurant-in-sedalia-40881561/
 https://www.westword.com/food-drink/seafood-chain-closes-its-only-colorado-location-in-denver-40805275/
 https://www.westword.com/food-drink/shuttered-wheat-ridge-butcher-shop-will-reopen-25545607/
 https://www.westword.com/food-drink/six-new-denver-restaurants-including-good-bones-colfax-40808582/
+https://www.westword.com/food-drink/soda-club-coming-to-denvers-ramble-hotel-40881683/
 https://www.westword.com/food-drink/south-broadway-chinese-staple-abruptly-closes-after-forty-years-40866146/
 https://www.westword.com/food-drink/south-broadway-subterranean-hifi-listening-bar-debuts-this-week-40855214/
 https://www.westword.com/food-drink/south-broadway-y2k-themed-bar-opening-soon-40819273/
@@ -190,6 +195,7 @@ https://www.westword.com/food-drink/sunnyside-ramen-staple-rebrands-under-new-ow
 https://www.westword.com/food-drink/tennyson-street-brewery-call-to-arms-announces-closure-40782734/
 https://www.westword.com/food-drink/texas-brunch-staple-paperboy-opening-denver-store-in-west-highland-40788500/
 https://www.westword.com/food-drink/theres-a-new-option-for-breakfast-burritos-and-donuts-on-south-broadway-40804713/
+https://www.westword.com/food-drink/three-chef-driven-restaurants-make-their-denver-debuts-40882747/
 https://www.westword.com/food-drink/three-downtown-restaurants-close-in-denver-25510211/
 https://www.westword.com/food-drink/three-in-one-concept-blendco-debuts-in-ballpark-25518513/
 https://www.westword.com/food-drink/top-boulder-chef-hosea-rosenberg-opening-new-italian-american-eatery-40871932/
