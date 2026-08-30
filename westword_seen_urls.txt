@@ -77,10 +77,12 @@ https://www.westword.com/food-drink/denver-central-market-vendors-claim-theyve-b
 https://www.westword.com/food-drink/denver-food-news-free-potatoes-beckon-expansion-40914818/
 https://www.westword.com/food-drink/denver-mexican-spot-among-most-anticipated-u-s-restaurant-openings-40830969/
 https://www.westword.com/food-drink/denver-openings-closings-italian-trattoria-pizzeria-lui-40909521/
+https://www.westword.com/food-drink/denver-po-boy-popup-the-source-40926990/
 https://www.westword.com/food-drink/denver-restaurant-closings-july-2026-40917356/
 https://www.westword.com/food-drink/denver-restaurant-fires-parisi-hideway-milpero-opens-40886101/
 https://www.westword.com/food-drink/denver-restaurant-opening-closing-july-2025-25187021/
 https://www.westword.com/food-drink/denver-restaurant-openings-and-closings-40903856/
+https://www.westword.com/food-drink/denver-restaurant-openings-and-closings-chicago-mikes-40927843/
 https://www.westword.com/food-drink/denver-restaurant-openings-closings-po-boy-chili-verde-40925145/
 https://www.westword.com/food-drink/denver-restaurant-openings-outpace-closings-two-to-one-40879801/
 https://www.westword.com/food-drink/denver-restaurant-owner-pivots-to-cannabis-edibles-40788584/
@@ -128,6 +130,7 @@ https://www.westword.com/food-drink/golden-triangle-gains-an-olive-finch-and-mor
 https://www.westword.com/food-drink/goldspot-brewery-closure-is-latest-in-denvers-changing-landscape-40837403/
 https://www.westword.com/food-drink/greenwood-village-brewpub-making-comeback-a-year-after-shutting-down-40858747/
 https://www.westword.com/food-drink/grocery-chain-aldi-is-finally-coming-to-colorado-40829505/
+https://www.westword.com/food-drink/hearth-bakery-highland-expansion-40927498/
 https://www.westword.com/food-drink/hell-or-high-water-tiki-bar-opens-in-rino-40885518/
 https://www.westword.com/food-drink/heretik-rino-new-restaurant-preview-40884973/
 https://www.westword.com/food-drink/high-end-downtown-tasting-menu-spot-is-making-a-comeback-40797836/
@@ -246,12 +249,15 @@ https://www.westword.com/food-drink/rino-restaurant-from-james-beard-nominated-c
 https://www.westword.com/food-drink/rino-southern-spot-yardbird-closes-and-more-restaurant-news-40788785/
 https://www.westword.com/food-drink/rino-staple-known-for-latin-dim-sum-announces-upcoming-closure-40845569/
 https://www.westword.com/food-drink/riot-bbq-chefs-open-new-restaurant-in-sedalia-40881561/
+https://www.westword.com/food-drink/rising-phoenix-lowry-chef-d-40927234/
 https://www.westword.com/food-drink/rock-bottom-denver-lawsuit-adobo-closing-40924918/
 https://www.westword.com/food-drink/seafood-chain-closes-its-only-colorado-location-in-denver-40805275/
 https://www.westword.com/food-drink/second-makfam-opening-in-edit-in-denver-rino-40894431/
 https://www.westword.com/food-drink/shuttered-wheat-ridge-butcher-shop-will-reopen-25545607/
 https://www.westword.com/food-drink/six-new-denver-restaurants-including-good-bones-colfax-40808582/
+https://www.westword.com/food-drink/small-bites-thai-eatery-eyes-vacant-union-station-space-40927724/
 https://www.westword.com/food-drink/soda-club-coming-to-denvers-ramble-hotel-40881683/
+https://www.westword.com/food-drink/soda-club-rino-denver-first-look-40927663/
 https://www.westword.com/food-drink/south-broadway-chinese-staple-abruptly-closes-after-forty-years-40866146/
 https://www.westword.com/food-drink/south-broadway-subterranean-hifi-listening-bar-debuts-this-week-40855214/
 https://www.westword.com/food-drink/south-broadway-y2k-themed-bar-opening-soon-40819273/
@@ -259,6 +265,7 @@ https://www.westword.com/food-drink/south-denver-food-hall-reopens-with-new-vend
 https://www.westword.com/food-drink/sundae-and-every-restaurant-opening-and-closing-this-week-in-denver-40894507/
 https://www.westword.com/food-drink/sunnyside-ramen-staple-rebrands-under-new-ownership-40855242/
 https://www.westword.com/food-drink/syrup-denver-cherry-creek-closing-40917339/
+https://www.westword.com/food-drink/table-6-denver-replacement-beckon-owners-40927886/
 https://www.westword.com/food-drink/table-6-to-close-next-month-after-22-years-40903759/
 https://www.westword.com/food-drink/take-one-last-ride-on-the-denver-delorean-june-7-40885078/
 https://www.westword.com/food-drink/tennyson-street-brewery-call-to-arms-announces-closure-40782734/
@@ -282,6 +289,7 @@ https://www.westword.com/food-drink/vinny-maries-debuts-in-arvada-and-more-new-d
 https://www.westword.com/food-drink/wash-park-restaurant-johnny-bechamels-opens-with-fun-italian-fare-40819569/
 https://www.westword.com/food-drink/wellness-sushi-colfax-closed-vegan-community-response-40914694/
 https://www.westword.com/food-drink/what-it-really-takes-to-open-a-restaurant-in-denver-today-40836126/
+https://www.westword.com/food-drink/where-to-get-baja-burritos-denver-40926729/
 https://www.westword.com/food-drink/where-will-new-colorado-aldis-open-denver-readers-have-thoughts-40829850/
 https://www.westword.com/food-drink/wolfs-tailor-cherry-creek-pop-up-sheep-40897166/
 https://www.westword.com/music/ante-up-denver-diy-punk-venue-40878508/
